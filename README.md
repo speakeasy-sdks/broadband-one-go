@@ -7,6 +7,7 @@
   <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge" /></a>
 </div>
 
+![bb1-diagram-h_0 (1)](https://github.com/speakeasy-sdks/broadband-one-go/assets/6267663/bfc886eb-2ab0-4c64-8423-ef6b3e7d21f7)
 
 <!-- Start SDK Installation -->
 ## SDK Installation
