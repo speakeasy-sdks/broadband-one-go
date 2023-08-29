@@ -1,0 +1,9 @@
+# PostAppointmentRequest
+
+
+## Fields
+
+| Field                                                                                               | Type                                                                                                | Required                                                                                            | Description                                                                                         |
+| --------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| `RelatedEntity`                                                                                     | [][PostAppointmentRequestRelatedEntity](../../models/shared/postappointmentrequestrelatedentity.md) | :heavy_check_mark:                                                                                  | List of related entities.                                                                           |
+| `ValidFor`                                                                                          | [PostAppointmentRequestValidFor](../../models/shared/postappointmentrequestvalidfor.md)             | :heavy_check_mark:                                                                                  | List of requested time slots.                                                                       |
