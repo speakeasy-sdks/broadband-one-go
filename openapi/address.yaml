@@ -1,0 +1,2068 @@
+openapi: 3.0.0
+info:
+  title: Address Management
+  description: Search the Rest of BT (RoBT) and Openreach address databases to find address records and keys to be used in orders. Where no suitable matching address is found, create an address and obtain a temporary address key.
+  version: '0.2'
+servers:
+  - url: https://api.wholesale.bt.com
+    description: Production
+  - url: https://api-sandbox.wholesale.bt.com
+    description: Sandbox
+security:
+  - OAuth2: []
+paths:
+  /geographicAddressManagement/v1/geographicAddress:
+    get:
+      summary: Address records
+      operationId: getGeographicAddress
+      description: |-
+
+        <p>Returns an array of address records including associated address keys, required for subsequent API calls.
+        </p>
+        <p>When searching the address databases, the API can be used to find matching pairs across the RoBT and Openreach databases. <br/>Technology markers for Openreach address records can also be retrieved which indicate the network types associated with address keys.<br/></p>
+        <p>For the RoBT address database only, where a suitable matching address is not found, an address can be created to obtain a temporary address key.<br/></p>
+        <p>The valid combinations of search parameters are listed below...<br/>
+        <ul><li>postcode</li>
+        <li>postcode + streetNr</li>
+        <li>postcode + buildingName</li>
+        <li>city + streetName + streetNr</li>
+        <li>city + streetName + buildingName</li>
+        <li>uprn</li>
+        </ul> 
+
+        <p>This API supports TLS mutual authentication.</p>
+        <details>
+
+        <summary><b>Sandbox responses</b></summary>
+        <p>The sandbox supports a number of success and failure scenarios. Use the parameters below in the sandbox API call to generate the corresponding responses.</p>
+        <p>Success example responses are simulated based on the query parameters provided in the request.</p>
+        <p>Back-end error example responses are simulated based on APIGW-Tracking-Header.</p>
+
+        <details>
+        <summary><b>Success scenarios</b></summary> 
+
+        | Combination of query parameters | Sandbox response invoked | Description |
+        | ------------------------------- | ---------------- | ----------- |
+        | <I>postcode</I>='AB15 7xy', <I>addressSource</I>='ROBT' | 200 | Retrieve address successfully based on the <I>postcode</I> and <I>addressSource</I>. |
+        | <I>postcode</I>='LS11 8LQ', <I>addressSource</I>='ROBT' | 200 | Retrieve address successfully based on the <I>postcode</I> and <I>addressSource</I>. |
+        | <I>postcode</I>='AB15 7YZ', <I>addressSource</I>='ROBT' | 200 | Retrieve address successfully based on the <I>postcode</I> and <I>addressSource</I>. |
+        | <I>postcode</I>='CM1 2EE', <I>addressSource</I>='ROBT' | 200 | Retrieve address successfully based on the <I>postcode</I> and <I>addressSource</I>. |
+        | <I>postcode</I>='AB15 7XY', <I>isSpatialRefBng</I>='false' | 200 | Retrieve address successfully based on the <I>postcode</I> and <I>isSpatialRefBng</I> is false. |
+        | <I>postcode</I>='AB15 7XY', <I>isSpatialRefBng</I>='true' | 200 | Retrieve address successfully based on the <I>postcode</I> and <I>isSpatialRefBng</I> is true. |
+        | <I>postcode</I>='AB15 7XY', <I>buildingName</I>='Riverside Tower', <I>isSpatialRefBng</I>='false' | 200 | Retrieve address successfully based on the <I>postcode</I>, <I>buildingName</I> and <I>isSpatialRefBng</I> is false. |
+        | <I>postcode</I>='AB15 7XY', <I>buildingName</I>='Riverside Tower', <I>isSpatialRefBng</I>='true' | 200 | Retrieve address successfully based on the <I>postcode</I>, <I>buildingName</I> and <I>isSpatialRefBng</I> is false. |
+        | <I>postcode</I>='AB15 7XY', <I>streetNr</I>='10', <I>isSpatialRefBng</I>='false' | 200 | Retrieve address successfully based on the <I>postcode</I> and <I>streetNr</I> and <I>isSpatialRefBng</I> is false. |
+        | <I>postcode</I>='AB15 7XY', <I>streetNr</I>='10', <I>isSpatialRefBng</I>='true' | 200 | Retrieve address successfully based on the <I>postcode</I> and <I>streetNr</I> and when <I>isSpatialRefBng</I> is true. |
+        | <I>streetNr</I>='10', <I>streetName</I>='Wellbrae Terrace', <I>city</I>='Aberdeen', <I>isSpatialRefBng</I>='false' | 200 | Retrieve address successfully based on the <I>streetNr</I>, <I>streetName</I>, <I>city</I> and <I>isSpatialRefBng</I> is false. |
+        | <I>streetNr</I>='10', <I>streetName</I>='Wellbrae Terrace', <I>city</I>='Aberdeen', <I>isSpatialRefBng</I>='true' | 200 | Retrieve address successfully based on the <I>streetNr</I>, <I>streetName</I>, <I>city</I> and <I>isSpatialRefBng</I> is true. |
+        | <I>buildingName</I>='Wellbrae Terrace', <I>streetName</I>='Wellbrae Terrace', <I>city</I>='Aberdeen', <I>isSpatialRefBng</I>='false' | 200 | Retrieve address successfully based on the <I>buildingName</I>, <I>streetName</I>, <I>city</I> and <I>isSpatialRefBng</I> is false. |
+        | <I>buildingName</I>='Wellbrae Terrace', <I>streetName</I>='Wellbrae Terrace', <I>city</I>='Aberdeen', <I>isSpatialRefBng</I>='true' | 200 | Retrieve address successfully based on the <I>buildingName</I>, <I>streetName</I>, <I>city</I> and <I>isSpatialRefBng</I> is true. |
+        | <I>uprn</I>='Z00000005015', <I>isSpatialRefBng</I>='true' | 200 | Retrieve address successfully based on the <I>uprn</I> and <I>isSpatialRefBng</I> is true. |
+        | <I>uprn</I>='Z00000005015', <I>isSpatialRefBng</I>='false' | 200 | Retrieve address successfully based on the <I>uprn</I> and <I>isSpatialRefBng</I> is false. |    
+        | <I>addressSource</I>='ROBT', <I>id</I>='X05000253608', <I>isSpatialRefBng</I>='false' | 200 | Retrieve address successfully based on the <I>addressSource</I>, id and <I>isSpatialRefBng</I> is false |
+        | <I>postcode</I>='AB10 1AU', <I>isSiteClassificationRequired</I>='true', <I>isTechonologyMarkersRequired</I>='true', <I>isSpatialRefBng</I>='true' | 200 | Retrieve address successfully based on the <I>postcode</I>, <I>isSiteClassificationRequired</I> is true, <I>isTechonologyMarkersRequired</I> is true and <I>isSpatialRefBng</I> is true. |
+        | <I>postcode</I>='AB10 1AU', <I>isSiteClassificationRequired</I>='true', <I>isTechonologyMarkersRequired</I>='true', <I>isSpatialRefBng</I>='false' | 200 | Retrieve address successfully based on the <I>postcode</I>, <I>isSiteClassificationRequired</I> is true, <I>isTechonologyMarkersRequired</I> is true and <I>isSpatialRefBng</I> is false. |
+        | <I>postcode</I>='AB10 1AU', <I>isFuzzyMatch</I>='true', <I>isSpatialRefBng</I>='false' | 200 | Retrieve address successfully based on the <I>postcode</I>, <I>isFuzzyMatch</I> is true and <I>isSpatialRefBng</I> is false. |
+
+        </details>
+
+        <details>
+        <summary><b>Error scenarios</b></summary>
+
+        | APIGW-Tracking-Header | Sandbox response invoked | Description | 
+        | ----------- | ------------ | ------------ |
+        | E02901 | 400, 29 | Bad request. |   
+        | E06001 | 404, 60 | Resource not found. |
+        | E00101 | 500, 01 | Internal server error. |
+        | E00501 | 503, 05 | The service is temporarily unavailable. |
+
+        </details>
+
+        </details>
+      x-codeSamples:
+        - lang: Shell
+          label: cURL
+          source: |
+            curl -XGET
+            -H "APIGW-Tracking-Header: 96bb97fa-b941-46bb-8c4e-86c616c28a13"
+            -H "Authorization: Bearer 12gDpD0ai180mFjl3uPwiGLJRDjY"
+            -H "APIGW-Client-Id: YAVF9mhKLbeNOAwB2CGsGOaFWDBjHOQA"
+            -H "btDuns: 221283316"
+            -H "UDID: 12344556"
+            -H "Recaptcha-Response-Token: 45tYU789000H"
+            https://api-sandbox.wholesale.bt.com/common/geographicAddressManagement/v1/geographicAddress?postcode=SW12 8NX&isSiteClassificationRequired=true&isTechonologyMarkersRequired=true&isFuzzyMatch=true
+      parameters:
+        - $ref: '#/components/parameters/APIGWTrackingHeader'
+        - $ref: '#/components/parameters/BearerAuthorisation'
+        - name: APIGW-Client-Id
+          in: header
+          description: Client identifier provided to the consumer. Mandatory for Siteminder / CAMAG authentication.
+          schema:
+            type: string
+            example: YAVF9mhKLbeNOAwB2CGsGOaFWDBjHOQA
+        - name: btDuns
+          in: header
+          description: 'Used as an identifier for LOB or component when calling Openreach NAD. '
+          schema:
+            type: string
+            example: '221283316'
+        - name: UDID
+          in: header
+          description: 'Represents unique device identifier. Required only in the case of CAMAG/ Siteminder authentication. '
+          schema:
+            type: string
+            example: '12344556'
+        - name: Recaptcha-Response-Token
+          in: header
+          description: 'The response token from the create captcha call. This is a mandatory field for SPA clients. '
+          schema:
+            type: string
+            example: 45tYU789000H
+        - name: postcode
+          in: query
+          description: Descriptor for a postal delivery area, used to speed and simplify the delivery of mail (also known as zipcode).
+          schema:
+            example: NW11 7NG
+            type: string
+            pattern: ^[A-Za-z]{1,2}[0-9][0-9A-Za-z]?\s?[0-9][A-Za-z]{2}$
+        - name: addressSource
+          in: query
+          description: Source from which address to be retrieved.
+          schema:
+            example: ROBT
+            type: string
+            enum:
+              - ROBT
+              - Openreach
+        - name: buildingName
+          in: query
+          description: Premise name. i.e., name of the building, particularly used where there is no street number. Allows for buildings that have well-known names.
+          schema:
+            example: Odeon
+            type: string
+            maxLength: 30
+        - name: uprn
+          in: query
+          description: Unique property reference number.
+          schema:
+            example: '9051030516'
+            type: string
+            maxLength: 12
+        - name: streetNr
+          in: query
+          description: 'Number identifying a specific property on a public street. '
+          schema:
+            example: '5'
+            type: string
+        - name: subStreet
+          in: query
+          description: It is necessary to store additional information as dependent thoroughfare/subStreet to uniquely identify each one, when a thoroughfare/street name exists more than once within a town.
+          schema:
+            example: Stephens
+            type: string
+            maxLength: 45
+        - name: locality
+          in: query
+          description: An area of defined or undefined boundaries within a local authority or other legislatively defined area, usually rural or semi-rural in nature. [ANZLIC-STREET], or a suburb a bounded locality within a city, town or shire principally of urban character [ANZLICSTREET].
+          schema:
+            example: LONDON
+            type: string
+        - name: subLocality
+          in: query
+          description: Supporting dependent locality name to uniquely identify a dependent locality.
+          schema:
+            example: Shelley Avenue
+            type: string
+            maxLength: 30
+        - name: subBuilding
+          in: query
+          description: An area within a building. The sub premise that will be available under the same premise.
+          schema:
+            example: Flat 1
+            type: string
+            maxLength: 200
+        - name: streetName
+          in: query
+          description: Name of the street or other street type.
+          schema:
+            example: Hoop Lane
+            type: string
+        - name: city
+          in: query
+          description: City that the address is in.
+          schema:
+            example: LONDON
+            type: string
+        - name: isSpatialRefBng
+          in: query
+          description: Boolean field to indicate whether spatial reference is required for easting and northing.
+          schema:
+            example: false
+            type: boolean
+        - name: id
+          in: query
+          description: NAD/Address Key returned by RoBT NAD.
+          schema:
+            example: X05000192647
+            type: string
+        - name: isSiteClassificationRequired
+          in: query
+          description: Boolean field to indicate whether site classification details to be returned in the response.
+          schema:
+            example: false
+            type: boolean
+        - name: isTechonologyMarkersRequired
+          in: query
+          description: Boolean field to indicate whether technology markers(copper,PointToPointFibre,FTTPBrownfield, FTTPGreenfield) and restrictions details to be returned in the response.
+          schema:
+            example: false
+            type: boolean
+        - name: isFuzzyMatch
+          in: query
+          description: Boolean field to indicate whether the Openreach address and ROBT address are to be matched.
+          schema:
+            example: true
+            type: boolean
+      responses:
+        '200':
+          description: OK
+          headers:
+            X-Total-Count:
+              description: Total number of items matching criteria.
+              schema:
+                type: integer
+                format: int32
+              required: true
+            X-Result-Count:
+              description: The count of the number of geographic addresses returned in the array element.
+              schema:
+                type: integer
+                format: int32
+              required: true
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/getGeographicAddressResponse'
+              examples:
+                Fuzzy match site classification and technology markers:
+                  value:
+                    - id: A00023776374
+                      addressMatch: false
+                      uprn: '121053761'
+                      addressSource: Openreach
+                      exchangeGroupCode: CLPM
+                      districtCode: LS
+                      qualifier: Gold
+                      streetNr: '81'
+                      streetName: Nightingale Lane
+                      postcode: SW12 8NX
+                      city: London
+                      country: United Kingdom
+                      '@type': BtGeographicAddress
+                      geographicLocationRefOrValue:
+                        geometry:
+                          - x: '51.4502848'
+                            'y': '-.1570936'
+                      geographicSubAddress:
+                        - '@type': BtGeographicSubAddress
+                      siteReference:
+                        siteClassificationCode: PP
+                        siteClassification: Property Shell
+                        listOfTechnology:
+                          technology:
+                            - technologyName: Copper
+                              technologyValue: 'Y'
+                            - technologyName: PointToPointFibre
+                              technologyValue: 'N'
+                            - technologyName: FTTPBrownfield
+                              technologyValue: 'N'
+                            - technologyName: FTTPGreenfield
+                              technologyValue: 'N'
+                        listOfTechnologyRestriction:
+                          technologyRestriction:
+                            - technologyRestrictionName: Copper
+                              technologyRestrictionValue: U
+                            - technologyRestrictionName: PointToPointFibre
+                              technologyRestrictionValue: U
+                            - technologyRestrictionName: FTTPBrownfield
+                              technologyRestrictionValue: U
+                            - technologyRestrictionName: FTTPGreenfield
+                              technologyRestrictionValue: U
+                    - id: A15104646284
+                      matchedId: R09598326361
+                      addressMatch: true
+                      uprn: '10091846447'
+                      parentUPRN: '121053761'
+                      addressSource: Openreach
+                      exchangeGroupCode: CLPM
+                      districtCode: LS
+                      qualifier: Gold
+                      streetNr: '81'
+                      streetName: Nightingale Lane
+                      postcode: SW12 8NX
+                      city: London
+                      country: United Kingdom
+                      postalOrganisation: ALPINE FINANCIAL SERVICES LTD
+                      '@type': BtGeographicAddress
+                      geographicLocationRefOrValue:
+                        geometry:
+                          - x: '51.4502848'
+                            'y': '-.1570936'
+                      geographicSubAddress:
+                        - '@type': BtGeographicSubAddress
+                      siteReference:
+                        siteClassificationCode: OR04
+                        siteClassification: Additional Mail / Packet Addressee
+                        listOfTechnology:
+                          technology:
+                            - technologyName: Copper
+                              technologyValue: 'N'
+                            - technologyName: PointToPointFibre
+                              technologyValue: 'N'
+                            - technologyName: FTTPBrownfield
+                              technologyValue: 'Y'
+                            - technologyName: FTTPGreenfield
+                              technologyValue: 'N'
+                        listOfTechnologyRestriction:
+                          technologyRestriction:
+                            - technologyRestrictionName: Copper
+                              technologyRestrictionValue: U
+                            - technologyRestrictionName: PointToPointFibre
+                              technologyRestrictionValue: U
+                            - technologyRestrictionName: FTTPBrownfield
+                              technologyRestrictionValue: U
+                            - technologyRestrictionName: FTTPGreenfield
+                              technologyRestrictionValue: U
+                    - id: A15104646413
+                      matchedId: R09598353913
+                      addressMatch: true
+                      uprn: '10091846446'
+                      parentUPRN: '121053761'
+                      addressSource: Openreach
+                      exchangeGroupCode: CLPM
+                      districtCode: LS
+                      qualifier: Gold
+                      streetNr: '81'
+                      streetName: Nightingale Lane
+                      postcode: SW12 8NX
+                      city: London
+                      country: United Kingdom
+                      postalOrganisation: DOUGLAS & GORDON
+                      '@type': BtGeographicAddress
+                      geographicLocationRefOrValue:
+                        geometry:
+                          - x: '51.4502848'
+                            'y': '-.1570936'
+                      geographicSubAddress:
+                        - '@type': BtGeographicSubAddress
+                      siteReference:
+                        siteClassificationCode: OR04
+                        siteClassification: Additional Mail / Packet Addressee
+                        listOfTechnology:
+                          technology:
+                            - technologyName: Copper
+                              technologyValue: 'N'
+                            - technologyName: PointToPointFibre
+                              technologyValue: 'N'
+                            - technologyName: FTTPBrownfield
+                              technologyValue: 'Y'
+                            - technologyName: FTTPGreenfield
+                              technologyValue: 'N'
+                        listOfTechnologyRestriction:
+                          technologyRestriction:
+                            - technologyRestrictionName: Copper
+                              technologyRestrictionValue: U
+                            - technologyRestrictionName: PointToPointFibre
+                              technologyRestrictionValue: U
+                            - technologyRestrictionName: FTTPBrownfield
+                              technologyRestrictionValue: U
+                            - technologyRestrictionName: FTTPGreenfield
+                              technologyRestrictionValue: U
+                    - id: A14874814088
+                      addressMatch: false
+                      uprn: '121053761'
+                      addressSource: Openreach
+                      exchangeGroupCode: CLPM
+                      districtCode: LS
+                      qualifier: Gold
+                      streetNr: '81'
+                      streetName: Nightingale Lane
+                      postcode: SW12 8NX
+                      city: London
+                      country: United Kingdom
+                      '@type': BtGeographicAddress
+                      geographicLocationRefOrValue:
+                        geometry:
+                          - x: '51.4502848'
+                            'y': '-.1570936'
+                      geographicSubAddress:
+                        - subBuilding: Floor Bas-Room Com-Cab
+                          '@type': BtGeographicSubAddress
+                      siteReference:
+                        siteClassificationCode: PP
+                        siteClassification: Property Shell
+                        listOfTechnology:
+                          technology:
+                            - technologyName: Copper
+                              technologyValue: 'N'
+                            - technologyName: PointToPointFibre
+                              technologyValue: 'Y'
+                            - technologyName: FTTPBrownfield
+                              technologyValue: 'N'
+                            - technologyName: FTTPGreenfield
+                              technologyValue: 'N'
+                        listOfTechnologyRestriction:
+                          technologyRestriction:
+                            - technologyRestrictionName: Copper
+                              technologyRestrictionValue: U
+                            - technologyRestrictionName: PointToPointFibre
+                              technologyRestrictionValue: U
+                            - technologyRestrictionName: FTTPBrownfield
+                              technologyRestrictionValue: U
+                            - technologyRestrictionName: FTTPGreenfield
+                              technologyRestrictionValue: U
+                    - id: A15104170385
+                      addressMatch: false
+                      uprn: '121053761'
+                      addressSource: Openreach
+                      exchangeGroupCode: CLPM
+                      districtCode: LS
+                      qualifier: Gold
+                      streetNr: '81'
+                      streetName: Nightingale Lane
+                      postcode: SW12 8NX
+                      city: London
+                      country: United Kingdom
+                      '@type': BtGeographicAddress
+                      geographicLocationRefOrValue:
+                        geometry:
+                          - x: '51.4502848'
+                            'y': '-.1570936'
+                      geographicSubAddress:
+                        - subBuilding: Floor Bas-Room Com-Wall
+                          '@type': BtGeographicSubAddress
+                      siteReference:
+                        siteClassificationCode: PP
+                        siteClassification: Property Shell
+                        listOfTechnology:
+                          technology:
+                            - technologyName: Copper
+                              technologyValue: 'N'
+                            - technologyName: PointToPointFibre
+                              technologyValue: 'Y'
+                            - technologyName: FTTPBrownfield
+                              technologyValue: 'N'
+                            - technologyName: FTTPGreenfield
+                              technologyValue: 'N'
+                        listOfTechnologyRestriction:
+                          technologyRestriction:
+                            - technologyRestrictionName: Copper
+                              technologyRestrictionValue: U
+                            - technologyRestrictionName: PointToPointFibre
+                              technologyRestrictionValue: U
+                            - technologyRestrictionName: FTTPBrownfield
+                              technologyRestrictionValue: U
+                            - technologyRestrictionName: FTTPGreenfield
+                              technologyRestrictionValue: U
+                    - id: A15104645377
+                      matchedId: R09761447276
+                      addressMatch: true
+                      uprn: '100022674385'
+                      parentUPRN: '121053761'
+                      addressSource: Openreach
+                      exchangeGroupCode: CLPM
+                      districtCode: LS
+                      qualifier: Gold
+                      streetNr: '81'
+                      streetName: Nightingale Lane
+                      postcode: SW12 8NX
+                      city: London
+                      country: United Kingdom
+                      '@type': BtGeographicAddress
+                      geographicLocationRefOrValue:
+                        geometry:
+                          - x: '51.4502756'
+                            'y': '-.1570796'
+                      geographicSubAddress:
+                        - subBuilding: Ground Floor
+                          '@type': BtGeographicSubAddress
+                      siteReference:
+                        siteClassificationCode: CR02
+                        siteClassification: Retail Service Agent
+                        listOfTechnology:
+                          technology:
+                            - technologyName: Copper
+                              technologyValue: 'N'
+                            - technologyName: PointToPointFibre
+                              technologyValue: 'N'
+                            - technologyName: FTTPBrownfield
+                              technologyValue: 'Y'
+                            - technologyName: FTTPGreenfield
+                              technologyValue: 'N'
+                        listOfTechnologyRestriction:
+                          technologyRestriction:
+                            - technologyRestrictionName: Copper
+                              technologyRestrictionValue: U
+                            - technologyRestrictionName: PointToPointFibre
+                              technologyRestrictionValue: U
+                            - technologyRestrictionName: FTTPBrownfield
+                              technologyRestrictionValue: U
+                            - technologyRestrictionName: FTTPGreenfield
+                              technologyRestrictionValue: U
+                    - id: A00066065781
+                      matchedId: R00312271753
+                      addressMatch: true
+                      uprn: '121053762'
+                      parentUPRN: '121053761'
+                      addressSource: Openreach
+                      exchangeGroupCode: CLPM
+                      districtCode: LS
+                      qualifier: Gold
+                      streetNr: 81A
+                      streetName: Nightingale Lane
+                      postcode: SW12 8NX
+                      locality: Balham
+                      city: London
+                      country: United Kingdom
+                      county: London
+                      '@type': BtGeographicAddress
+                      geographicLocationRefOrValue:
+                        geometry:
+                          - x: '51.4502756'
+                            'y': '-.1570796'
+                      geographicSubAddress:
+                        - '@type': BtGeographicSubAddress
+                      siteReference:
+                        siteClassificationCode: RD06
+                        siteClassification: Self Contained Flat (Includes Maisonette / Apartment)
+                        listOfTechnology:
+                          technology:
+                            - technologyName: Copper
+                              technologyValue: 'Y'
+                            - technologyName: PointToPointFibre
+                              technologyValue: 'N'
+                            - technologyName: FTTPBrownfield
+                              technologyValue: 'Y'
+                            - technologyName: FTTPGreenfield
+                              technologyValue: 'N'
+                        listOfTechnologyRestriction:
+                          technologyRestriction:
+                            - technologyRestrictionName: Copper
+                              technologyRestrictionValue: U
+                            - technologyRestrictionName: PointToPointFibre
+                              technologyRestrictionValue: U
+                            - technologyRestrictionName: FTTPBrownfield
+                              technologyRestrictionValue: U
+                            - technologyRestrictionName: FTTPGreenfield
+                              technologyRestrictionValue: U
+                    - id: A15104646594
+                      matchedId: R09761412452
+                      addressMatch: true
+                      uprn: '100022674390'
+                      parentUPRN: '100023306424'
+                      addressSource: Openreach
+                      exchangeGroupCode: CLPM
+                      districtCode: LS
+                      qualifier: Gold
+                      streetNr: '83'
+                      streetName: Nightingale Lane
+                      postcode: SW12 8NX
+                      city: London
+                      country: United Kingdom
+                      '@type': BtGeographicAddress
+                      geographicLocationRefOrValue:
+                        geometry:
+                          - x: '51.4502954'
+                            'y': '-.1571939'
+                      geographicSubAddress:
+                        - subBuilding: Flat B Ground And First Floors
+                          '@type': BtGeographicSubAddress
+                      siteReference:
+                        siteClassificationCode: RD06
+                        siteClassification: Self Contained Flat (Includes Maisonette / Apartment)
+                        listOfTechnology:
+                          technology:
+                            - technologyName: Copper
+                              technologyValue: 'N'
+                            - technologyName: PointToPointFibre
+                              technologyValue: 'N'
+                            - technologyName: FTTPBrownfield
+                              technologyValue: 'Y'
+                            - technologyName: FTTPGreenfield
+                              technologyValue: 'N'
+                        listOfTechnologyRestriction:
+                          technologyRestriction:
+                            - technologyRestrictionName: Copper
+                              technologyRestrictionValue: U
+                            - technologyRestrictionName: PointToPointFibre
+                              technologyRestrictionValue: U
+                            - technologyRestrictionName: FTTPBrownfield
+                              technologyRestrictionValue: U
+                            - technologyRestrictionName: FTTPGreenfield
+                              technologyRestrictionValue: U
+                    - id: A15104646354
+                      matchedId: R00025658588
+                      addressMatch: true
+                      uprn: '121033817'
+                      parentUPRN: '100023306424'
+                      addressSource: Openreach
+                      exchangeGroupCode: CLPM
+                      districtCode: LS
+                      qualifier: Gold
+                      streetNr: '83'
+                      streetName: Nightingale Lane
+                      postcode: SW12 8NX
+                      city: London
+                      country: United Kingdom
+                      postalOrganisation: CHOCOLATINE
+                      '@type': BtGeographicAddress
+                      geographicLocationRefOrValue:
+                        geometry:
+                          - x: '51.4502954'
+                            'y': '-.1571939'
+                      geographicSubAddress:
+                        - subBuilding: Ground Floor
+                          '@type': BtGeographicSubAddress
+                      siteReference:
+                        siteClassificationCode: CR07
+                        siteClassification: Restaurant / Cafeteria
+                        listOfTechnology:
+                          technology:
+                            - technologyName: Copper
+                              technologyValue: 'N'
+                            - technologyName: PointToPointFibre
+                              technologyValue: 'N'
+                            - technologyName: FTTPBrownfield
+                              technologyValue: 'Y'
+                            - technologyName: FTTPGreenfield
+                              technologyValue: 'N'
+                        listOfTechnologyRestriction:
+                          technologyRestriction:
+                            - technologyRestrictionName: Copper
+                              technologyRestrictionValue: U
+                            - technologyRestrictionName: PointToPointFibre
+                              technologyRestrictionValue: U
+                            - technologyRestrictionName: FTTPBrownfield
+                              technologyRestrictionValue: U
+                            - technologyRestrictionName: FTTPGreenfield
+                              technologyRestrictionValue: U
+                    - id: R09574594996
+                      addressMatch: false
+                      uprn: ''
+                      parentUPRN: ''
+                      addressSource: ROBT
+                      exchangeGroupCode: CLPM
+                      districtCode: LS
+                      qualifier: Non-Gold
+                      streetNr: ''
+                      streetName: Nightingale Lane
+                      postcode: SW12 8NX
+                      locality: Balham
+                      city: London
+                      country: United Kingdom
+                      postalOrganisation: ''
+                      poBox: ''
+                      county: London
+                      bestAddressLine1: 81A Nightingale Lane
+                      bestAddressLine2: Balham
+                      bestAddressLine3: London
+                      bestAddressLine4: ''
+                      '@type': BtGeographicAddress
+                      geographicLocationRefOrValue:
+                        geometry:
+                          - x: '51.45028'
+                            'y': '-0.15711'
+                      geographicSubAddress:
+                        - buildingName: ''
+                          subBuilding: 81A
+                          subStreet: ''
+                          subLocality: ''
+                          '@type': BtGeographicSubAddress
+                      siteReference:
+                        siteClassificationCode: ''
+                        siteClassification: ''
+                    - id: R00025658612
+                      addressMatch: false
+                      uprn: ''
+                      parentUPRN: ''
+                      addressSource: ROBT
+                      exchangeGroupCode: CLPM
+                      districtCode: LS
+                      qualifier: Non-Gold
+                      streetNr: '81'
+                      streetName: Nightingale Lane
+                      postcode: SW12 8NX
+                      locality: Balham
+                      city: London
+                      country: United Kingdom
+                      postalOrganisation: ALPINE
+                      poBox: ''
+                      county: London
+                      bestAddressLine1: 81 Nightingale Lane
+                      bestAddressLine2: Balham
+                      bestAddressLine3: London
+                      bestAddressLine4: ''
+                      '@type': BtGeographicAddress
+                      geographicLocationRefOrValue:
+                        geometry:
+                          - x: '51.45028'
+                            'y': '-0.15712'
+                      geographicSubAddress:
+                        - buildingName: ''
+                          subBuilding: ''
+                          subStreet: ''
+                          subLocality: ''
+                          '@type': BtGeographicSubAddress
+                      siteReference:
+                        siteClassificationCode: ''
+                        siteClassification: ''
+                    - id: R09779734453
+                      addressMatch: false
+                      uprn: ''
+                      parentUPRN: ''
+                      addressSource: ROBT
+                      exchangeGroupCode: CLPM
+                      districtCode: LS
+                      qualifier: Gold
+                      streetNr: '87'
+                      streetName: Nightingale Lane
+                      postcode: SW12 8NX
+                      locality: ''
+                      city: London
+                      country: United Kingdom
+                      postalOrganisation: JACINTA O'NEILL HAIR & BEAUTY
+                      poBox: ''
+                      county: ''
+                      bestAddressLine1: 87 Nightingale Lane
+                      bestAddressLine2: London
+                      bestAddressLine3: ''
+                      bestAddressLine4: ''
+                      '@type': BtGeographicAddress
+                      geographicLocationRefOrValue:
+                        geometry:
+                          - x: '51.45023'
+                            'y': '-0.15739'
+                      geographicSubAddress:
+                        - buildingName: ''
+                          subBuilding: ''
+                          subStreet: ''
+                          subLocality: ''
+                          '@type': BtGeographicSubAddress
+                      siteReference:
+                        siteClassificationCode: ''
+                        siteClassification: ''
+                    - id: R09761447276
+                      matchedId: A15104645377
+                      addressMatch: true
+                      uprn: '100022674385'
+                      parentUPRN: '121053761'
+                      addressSource: ROBT
+                      exchangeGroupCode: CLPM
+                      districtCode: LS
+                      qualifier: Gold
+                      streetNr: '81'
+                      streetName: Nightingale Lane
+                      postcode: SW12 8NX
+                      locality: ''
+                      city: London
+                      country: United Kingdom
+                      postalOrganisation: ''
+                      poBox: ''
+                      county: ''
+                      bestAddressLine1: Ground Floor
+                      bestAddressLine2: 81 Nightingale Lane
+                      bestAddressLine3: London
+                      bestAddressLine4: ''
+                      '@type': BtGeographicAddress
+                      geographicLocationRefOrValue:
+                        geometry:
+                          - x: '51.45028'
+                            'y': '-0.15711'
+                      geographicSubAddress:
+                        - buildingName: ''
+                          subBuilding: GROUND FLOOR
+                          subStreet: ''
+                          subLocality: ''
+                          '@type': BtGeographicSubAddress
+                      siteReference:
+                        siteClassificationCode: ''
+                        siteClassification: ''
+                    - id: R09761412452
+                      matchedId: A15104646594
+                      addressMatch: true
+                      uprn: '100022674390'
+                      parentUPRN: '100023306424'
+                      addressSource: ROBT
+                      exchangeGroupCode: CLPM
+                      districtCode: LS
+                      qualifier: Gold
+                      streetNr: '83'
+                      streetName: Nightingale Lane
+                      postcode: SW12 8NX
+                      locality: ''
+                      city: London
+                      country: United Kingdom
+                      postalOrganisation: ''
+                      poBox: ''
+                      county: ''
+                      bestAddressLine1: Flat B Ground And First Floors Rear
+                      bestAddressLine2: 83 Nightingale Lane
+                      bestAddressLine3: London
+                      bestAddressLine4: ''
+                      '@type': BtGeographicAddress
+                      geographicLocationRefOrValue:
+                        geometry:
+                          - x: '51.4503'
+                            'y': '-0.15722'
+                      geographicSubAddress:
+                        - buildingName: ''
+                          subBuilding: FLAT B GROUND AND FIRST FLOORS
+                          subStreet: ''
+                          subLocality: ''
+                          '@type': BtGeographicSubAddress
+                      siteReference:
+                        siteClassificationCode: ''
+                        siteClassification: ''
+                    - id: R09598353913
+                      matchedId: A15104646413
+                      addressMatch: true
+                      uprn: '10091846446'
+                      parentUPRN: '121053761'
+                      addressSource: ROBT
+                      exchangeGroupCode: CLPM
+                      districtCode: LS
+                      qualifier: Gold
+                      streetNr: '81'
+                      streetName: Nightingale Lane
+                      postcode: SW12 8NX
+                      locality: ''
+                      city: London
+                      country: United Kingdom
+                      postalOrganisation: DOUGLAS & GORDON
+                      poBox: ''
+                      county: ''
+                      bestAddressLine1: 81 Nightingale Lane
+                      bestAddressLine2: London
+                      bestAddressLine3: ''
+                      bestAddressLine4: ''
+                      '@type': BtGeographicAddress
+                      geographicLocationRefOrValue:
+                        geometry:
+                          - x: '51.45028'
+                            'y': '-0.15712'
+                      geographicSubAddress:
+                        - buildingName: ''
+                          subBuilding: ''
+                          subStreet: ''
+                          subLocality: ''
+                          '@type': BtGeographicSubAddress
+                      siteReference:
+                        siteClassificationCode: ''
+                        siteClassification: ''
+                    - id: R09598326361
+                      matchedId: A15104646284
+                      addressMatch: true
+                      uprn: '10091846447'
+                      parentUPRN: '121053761'
+                      addressSource: ROBT
+                      exchangeGroupCode: CLPM
+                      districtCode: LS
+                      qualifier: Gold
+                      streetNr: '81'
+                      streetName: Nightingale Lane
+                      postcode: SW12 8NX
+                      locality: ''
+                      city: London
+                      country: United Kingdom
+                      postalOrganisation: ALPINE FINANCIAL SERVICES LTD
+                      poBox: ''
+                      county: ''
+                      bestAddressLine1: 81 Nightingale Lane
+                      bestAddressLine2: London
+                      bestAddressLine3: ''
+                      bestAddressLine4: ''
+                      '@type': BtGeographicAddress
+                      geographicLocationRefOrValue:
+                        geometry:
+                          - x: '51.45028'
+                            'y': '-0.15712'
+                      geographicSubAddress:
+                        - buildingName: ''
+                          subBuilding: ''
+                          subStreet: ''
+                          subLocality: ''
+                          '@type': BtGeographicSubAddress
+                      siteReference:
+                        siteClassificationCode: ''
+                        siteClassification: ''
+                    - id: R00025658588
+                      matchedId: A15104646354
+                      addressMatch: true
+                      uprn: '121033817'
+                      parentUPRN: '100023306424'
+                      addressSource: ROBT
+                      exchangeGroupCode: CLPM
+                      districtCode: LS
+                      qualifier: Gold
+                      streetNr: '83'
+                      streetName: Nightingale Lane
+                      postcode: SW12 8NX
+                      locality: ''
+                      city: London
+                      country: United Kingdom
+                      postalOrganisation: CHOCOLATINE
+                      poBox: ''
+                      county: ''
+                      bestAddressLine1: Ground Floor
+                      bestAddressLine2: 83 Nightingale Lane
+                      bestAddressLine3: London
+                      bestAddressLine4: ''
+                      '@type': BtGeographicAddress
+                      geographicLocationRefOrValue:
+                        geometry:
+                          - x: '51.4503'
+                            'y': '-0.15722'
+                      geographicSubAddress:
+                        - buildingName: ''
+                          subBuilding: GROUND FLOOR
+                          subStreet: ''
+                          subLocality: ''
+                          '@type': BtGeographicSubAddress
+                      siteReference:
+                        siteClassificationCode: ''
+                        siteClassification: ''
+                    - id: R00312271753
+                      matchedId: A00066065781
+                      addressMatch: true
+                      uprn: '121053762'
+                      parentUPRN: '121053761'
+                      addressSource: ROBT
+                      exchangeGroupCode: CLPM
+                      districtCode: LS
+                      qualifier: Gold
+                      streetNr: 81A
+                      streetName: Nightingale Lane
+                      postcode: SW12 8NX
+                      locality: ''
+                      city: London
+                      country: United Kingdom
+                      postalOrganisation: ''
+                      poBox: ''
+                      county: ''
+                      bestAddressLine1: 81A Nightingale Lane
+                      bestAddressLine2: London
+                      bestAddressLine3: ''
+                      bestAddressLine4: ''
+                      '@type': BtGeographicAddress
+                      geographicLocationRefOrValue:
+                        geometry:
+                          - x: '51.45028'
+                            'y': '-0.15711'
+                      geographicSubAddress:
+                        - buildingName: ''
+                          subBuilding: ''
+                          subStreet: ''
+                          subLocality: ''
+                          '@type': BtGeographicSubAddress
+                      siteReference:
+                        siteClassificationCode: ''
+                        siteClassification: ''
+                RoBT address source and BNG spatial ref:
+                  value:
+                    - id: R09761459948
+                      uprn: '100022674390'
+                      parentUPRN: '100023306424'
+                      addressSource: ROBT
+                      exchangeGroupCode: CLPM
+                      districtCode: LS
+                      qualifier: Non-Gold
+                      streetNr: 83B
+                      streetName: Nightingale Lane
+                      postcode: SW12 8NX
+                      locality: ''
+                      city: London
+                      country: United Kingdom
+                      postalOrganisation: ''
+                      poBox: ''
+                      county: ''
+                      bestAddressLine1: Flat Ground And First Floors Rear
+                      bestAddressLine2: 83B Nightingale Lane
+                      bestAddressLine3: London
+                      bestAddressLine4: ''
+                      '@type': BtGeographicAddress
+                      geographicLocationRefOrValue:
+                        - geometry:
+                            - x: '51.4503'
+                              'y': '-0.15722'
+                          spatialRef: WGS84
+                        - geometry:
+                            - x: '528147'
+                              'y': '173978'
+                          spatialRef: BNG
+                      geographicSubAddress:
+                        - buildingName: FLAT GROUND AND FIRST FLOORS REAR
+                          subBuilding: ''
+                          subStreet: ''
+                          subLocality: ''
+                          '@type': BtGeographicSubAddress
+                    - id: R09598326361
+                      uprn: '10091846447'
+                      parentUPRN: '121053761'
+                      addressSource: ROBT
+                      exchangeGroupCode: CLPM
+                      districtCode: LS
+                      qualifier: Gold
+                      streetNr: '81'
+                      streetName: Nightingale Lane
+                      postcode: SW12 8NX
+                      locality: ''
+                      city: London
+                      country: United Kingdom
+                      postalOrganisation: ALPINE FINANCIAL SERVICES LTD
+                      poBox: ''
+                      county: ''
+                      bestAddressLine1: 81 Nightingale Lane
+                      bestAddressLine2: London
+                      bestAddressLine3: ''
+                      bestAddressLine4: ''
+                      '@type': BtGeographicAddress
+                      geographicLocationRefOrValue:
+                        - geometry:
+                            - x: '51.45028'
+                              'y': '-0.15712'
+                          spatialRef: WGS84
+                        - geometry:
+                            - x: '528154'
+                              'y': '173977'
+                          spatialRef: BNG
+                      geographicSubAddress:
+                        - buildingName: ''
+                          subBuilding: ''
+                          subStreet: ''
+                          subLocality: ''
+                          '@type': BtGeographicSubAddress
+                    - id: R09598353913
+                      uprn: '10091846446'
+                      parentUPRN: '121053761'
+                      addressSource: ROBT
+                      exchangeGroupCode: CLPM
+                      districtCode: LS
+                      qualifier: Gold
+                      streetNr: '81'
+                      streetName: Nightingale Lane
+                      postcode: SW12 8NX
+                      locality: ''
+                      city: London
+                      country: United Kingdom
+                      postalOrganisation: DOUGLAS & GORDON
+                      poBox: ''
+                      county: ''
+                      bestAddressLine1: 81 Nightingale Lane
+                      bestAddressLine2: London
+                      bestAddressLine3: ''
+                      bestAddressLine4: ''
+                      '@type': BtGeographicAddress
+                      geographicLocationRefOrValue:
+                        - geometry:
+                            - x: '51.45028'
+                              'y': '-0.15712'
+                          spatialRef: WGS84
+                        - geometry:
+                            - x: '528154'
+                              'y': '173977'
+                          spatialRef: BNG
+                      geographicSubAddress:
+                        - buildingName: ''
+                          subBuilding: ''
+                          subStreet: ''
+                          subLocality: ''
+                          '@type': BtGeographicSubAddress
+                    - id: R09761447276
+                      uprn: '100022674385'
+                      parentUPRN: '121053761'
+                      addressSource: ROBT
+                      exchangeGroupCode: CLPM
+                      districtCode: LS
+                      qualifier: Gold
+                      streetNr: '81'
+                      streetName: Nightingale Lane
+                      postcode: SW12 8NX
+                      locality: ''
+                      city: London
+                      country: United Kingdom
+                      postalOrganisation: ''
+                      poBox: ''
+                      county: ''
+                      bestAddressLine1: Ground Floor
+                      bestAddressLine2: 81 Nightingale Lane
+                      bestAddressLine3: London
+                      bestAddressLine4: ''
+                      '@type': BtGeographicAddress
+                      geographicLocationRefOrValue:
+                        - geometry:
+                            - x: '51.45028'
+                              'y': '-0.15711'
+                          spatialRef: WGS84
+                        - geometry:
+                            - x: '528155'
+                              'y': '173976'
+                          spatialRef: BNG
+                      geographicSubAddress:
+                        - buildingName: ''
+                          subBuilding: GROUND FLOOR
+                          subStreet: ''
+                          subLocality: ''
+                          '@type': BtGeographicSubAddress
+                    - id: R00312271753
+                      uprn: '121053762'
+                      parentUPRN: '121053761'
+                      addressSource: ROBT
+                      exchangeGroupCode: CLPM
+                      districtCode: LS
+                      qualifier: Gold
+                      streetNr: 81A
+                      streetName: Nightingale Lane
+                      postcode: SW12 8NX
+                      locality: ''
+                      city: London
+                      country: United Kingdom
+                      postalOrganisation: ''
+                      poBox: ''
+                      county: ''
+                      bestAddressLine1: 81A Nightingale Lane
+                      bestAddressLine2: London
+                      bestAddressLine3: ''
+                      bestAddressLine4: ''
+                      '@type': BtGeographicAddress
+                      geographicLocationRefOrValue:
+                        - geometry:
+                            - x: '51.45028'
+                              'y': '-0.15711'
+                          spatialRef: WGS84
+                        - geometry:
+                            - x: '528155'
+                              'y': '173976'
+                          spatialRef: BNG
+                      geographicSubAddress:
+                        - buildingName: ''
+                          subBuilding: ''
+                          subStreet: ''
+                          subLocality: ''
+                          '@type': BtGeographicSubAddress
+                    - id: R09778454175
+                      uprn: '100023306424'
+                      parentUPRN: ''
+                      addressSource: ROBT
+                      exchangeGroupCode: CLPM
+                      districtCode: LS
+                      qualifier: Gold
+                      streetNr: '83'
+                      streetName: Nightingale Lane
+                      postcode: SW12 8NX
+                      locality: ''
+                      city: London
+                      country: United Kingdom
+                      postalOrganisation: ''
+                      poBox: ''
+                      county: ''
+                      bestAddressLine1: 83 Nightingale Lane
+                      bestAddressLine2: London
+                      bestAddressLine3: ''
+                      bestAddressLine4: ''
+                      '@type': BtGeographicAddress
+                      geographicLocationRefOrValue:
+                        - geometry:
+                            - x: '51.4503'
+                              'y': '-0.15722'
+                          spatialRef: WGS84
+                        - geometry:
+                            - x: '528147'
+                              'y': '173978'
+                          spatialRef: BNG
+                      geographicSubAddress:
+                        - buildingName: ''
+                          subBuilding: ''
+                          subStreet: ''
+                          subLocality: ''
+                          '@type': BtGeographicSubAddress
+        '400':
+          description: |-
+            Bad Request
+
+            | Code | Message | Description |
+            | ---- | ------- | ----------- |
+            | 25 | Missing header: \<parameter\> | The indicated parameter is missing from the request header. | 
+            | 26 | Invalid header value: \<parameter\> | The indicated parameter is invalid from the request header. | 
+            | 27 | - | The indicated parameter is missing from query-string. |
+            | 28 | Address key not supplied | The indicated parameter is missing from query-string. |
+            | 29 | - | A general bad request error where we don't want to be any more specific. | 
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FailureResponse'
+              examples:
+                For APIGW error:
+                  value:
+                    code: '25'
+                    message: 'Missing header: <parameter>'
+                For back-end error:
+                  value:
+                    code: '28'
+                    reason: Invalid query-string parameter value
+                    message: Address key not supplied
+          headers:
+            APIGW-Exception:
+              $ref: '#/components/headers/ExceptionOptional'
+            APIGW-Exception-Code:
+              $ref: '#/components/headers/ExceptionCodeOptional'
+            APIGW-Exception-System:
+              $ref: '#/components/headers/ExceptionSystemOptional'
+            Content-Type:
+              $ref: '#/components/headers/ContentTypeOptional'
+        '401':
+          $ref: '#/components/responses/APIGWUnauthorized'
+        '403':
+          $ref: '#/components/responses/APIGWAccessDenied'
+        '404':
+          description: |-
+            Resource not found
+
+            | Code | Message | Description |
+            | ---- | ------- | ----------- |
+            | 60 | No matching address found | The requested URI or the requested resource does not exist.|
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FailureResponse'
+              example:
+                code: '60'
+                message: No matching address found.
+                reason: Resource not found
+        '405':
+          $ref: '#/components/responses/APIGWMethodNotAllowed'
+        '500':
+          description: |-
+            Internal Server Error
+
+            | Code | Message | Description |
+            | ---- | ------- | ----------- |
+            | 01 | Internal Error / There was an error processing your request, please try again later | BT error code / 'isSPA' custom attribute is not set to "true" by SPA clients. |
+            | 02 | - | Generic failure message, used if no more precise code can be provided. |
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FailureResponse'
+              examples:
+                For APIGW error:
+                  value:
+                    code: '01'
+                    message: Internal Error
+                For back-end error:
+                  value:
+                    code: '01'
+                    reason: Internal Error
+                    message: There was an error processing your request, please try again later
+          headers:
+            APIGW-Exception:
+              $ref: '#/components/headers/ExceptionOptional'
+            APIGW-Exception-Code:
+              $ref: '#/components/headers/ExceptionCodeOptional'
+            APIGW-Exception-System:
+              $ref: '#/components/headers/ExceptionSystemOptional'
+            Content-Type:
+              $ref: '#/components/headers/ContentTypeOptional'
+        '503':
+          description: |-
+            Service Unavailable
+
+            | Code | Message | Description |
+            | ---- | ------- | ----------- |
+            | 05 | The service is temporarily unavailable / There was an error processing your request, please try again later | Please try again later. | 
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FailureResponse'
+              examples:
+                For APIGW error:
+                  value:
+                    code: '05'
+                    message: The service is temporarily unavailable
+                For back-end error:
+                  value:
+                    code: '05'
+                    reason: The service is temporarily unavailable
+                    message: There was an error processing your request, please try again later
+          headers:
+            APIGW-Exception:
+              $ref: '#/components/headers/ExceptionOptional'
+            APIGW-Exception-Code:
+              $ref: '#/components/headers/ExceptionCodeOptional'
+            APIGW-Exception-System:
+              $ref: '#/components/headers/ExceptionSystemOptional'
+            Content-Type:
+              $ref: '#/components/headers/ContentTypeOptional'
+    post:
+      summary: Create address record
+      operationId: CreateGeographicAddress
+      description: |-
+
+        <p>For the RoBT address database only, where a suitable matching address is not found, an address can be created to obtain a temporary address key.</p>
+        <p>This API supports TLS mutual authentication.</p>
+
+        <details>
+        <summary><b>Sandbox responses</b></summary>
+
+        <p>The sandbox supports a number of success and failure scenarios. Use the parameters below in the sandbox API call to generate the corresponding responses.</p>
+        <p>Success example responses are simulated based on the various inputs like postcode, streetNr, country, city, buildingName, postalOrganisation provided in the request payload as mentioned in the sample API request.</p>
+        <p>Back-end error example responses are simulated based on APIGW-Tracking-Header.</p>
+        <details>
+        <summary><b>Success scenarios</b></summary> 
+
+        | Combination of query parameters | Sandbox response invoked | Description |
+        | ------------------------------- | ---------------- | ----------- |
+        | <I>postcode</I>='AB15 7XY', <I>streetNr</I>='23', <I>country</I>='uk', <I>city</I>=London | 201 | Creates the address successfully based on these inputs in payload. |
+        | <I>postcode</I>='AB10 1AU', <I>buildingName</I>='Odeon', <I>country</I>='united kingdom', <I>city</I>=Bristol | 201 | Creates the address successfully based on these inputs in payload. |
+        | <I>postcode</I>='NW11 1AG', <I>postalOrganisation</I>='PNC', <I>country</I>='united kingdom', <I>city</I>=Hatfield | 201 | Creates the address successfully based on these inputs in payload. |    
+
+        </details>
+
+        <details>
+        <summary><b>Error scenarios</b></summary>
+
+        | APIGW-Tracking-Header | Sandbox response invoked | Description | 
+        | ----------- | ------------ | ------------ |
+        | E00301 | 400, 29 | Bad request. |   
+        | E00101 | 500, 01 | Internal error. |
+        | E00201 | 503, 05 | The service is temporarily unavailable. |
+
+        </details>
+        </details>
+      x-codeSamples:
+        - lang: Shell
+          label: cURL
+          source: |
+            curl -XPOST
+            -H "APIGW-Tracking-Header: 96bb97fa-b941-46bb-8c4e-86c616c28a13"
+            -H "Authorization: Bearer 12gDpD0ai180mFjl3uPwiGLJRDjY"
+            -H "target: ROBT"
+            -H "btDuns: 221283316"
+            -H "Content-Type: application/json"
+            https://api-sandbox.wholesale.bt.com/common/geographicAddressManagement/v1/geographicAddress
+            {
+                "streetNr": "23",
+                "streetName": "HoopLane",
+                "postcode": "AB157XY",
+                "locality": "LONDON",
+                "city": "London",
+                "country": "UK",
+                "postalOrganisation": "PNC",
+                "poBox": "40",
+                "@type": "BtGeographicAddress",
+                "county": "123",
+                "geographicSubAddress": [
+                    {
+                        "buildingName": "Odeon",
+                        "subBuilding": "Flat1",
+                        "subStreet": "Stephens",
+                        "subLocality": "ShelleyAvenue",
+                        "@type": "BtGeographicSubAddress"
+                    }
+                ]
+            }
+      security:
+        - OAuth2: []
+      parameters:
+        - $ref: '#/components/parameters/APIGWTrackingHeader'
+        - $ref: '#/components/parameters/BearerAuthorisation'
+        - $ref: '#/components/parameters/JSONContentType'
+        - name: target
+          required: false
+          in: header
+          description: Downstream component to be called by service. Sample values are ROBT, Enterprise-ROBT, BTConsumer-ROBT, Openreach.
+          schema:
+            type: string
+            example: ROBT
+        - name: btDuns
+          in: header
+          description: 'Used as an identifier for LOB or component when calling Openreach NAD. '
+          schema:
+            type: string
+            example: '221283316'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/createGeographicAddressRequest'
+            examples:
+              For streetNr, city , country and postcode:
+                value:
+                  streetNr: 97a
+                  streetName: Nightingale Lane
+                  postcode: SW12 8NX
+                  locality: Balham
+                  city: London
+                  country: United Kingdom
+                  county: London
+                  '@type': BtGeographicAddress
+                  geographicSubAddress:
+                    - buildingName: The Nightingale
+                      subBuilding: First Floor
+                      '@type': BtGeographicSubAddress
+              For postalOrganisation, city, country and postcode:
+                value:
+                  streetName: SHEPHERD MARKET
+                  postcode: W1J 7QU
+                  city: LONDON
+                  country: United Kingdom
+                  county: MIDDLESEX
+                  postalOrganisation: JOSEPH AND DAUGTHERS LIMITED
+                  '@type': BtGeographicAddress
+              For buildingName, city, country and postcode:
+                value:
+                  streetName: Lesser Lane
+                  postcode: SK23 9UZ
+                  city: High Peak
+                  country: United Kingdom
+                  '@type': BtGeographicAddress
+                  geographicSubAddress:
+                    - buildingName: The Post House
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/createGeographicAddressResponse'
+              examples:
+                For streetNr, city , country and postcode:
+                  value:
+                    id: S14084134555
+                For postalOrganisation, city, country and postcode:
+                  value:
+                    id: X05000192647
+                For buildingName, city, country and postcode:
+                  value:
+                    id: X20154697825
+        '400':
+          description: |-
+            Bad Request
+
+            | Code | Message | Description |
+            | ---- | ------- | ----------- |
+            | 25 | Missing header: \<parameter\> | The indicated parameter is missing from the request header. |
+            | 26 | Invalid header value: \<parameter\> | The indicated parameter in the request header is not recognized. |
+            | 21 | Missing body | This resource requires a body to be provided in the request. |
+            | 23 | Missing \<parameter\> | The indicated parameter is missing from the body of the request. |
+            | 24 | Invalid \<parameter\> | The indicated parameter in the body of the request is not recognised. |
+            | 29 | Bad Request | A general bad request error where we don't want to be any more specific. |
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FailureResponse'
+              examples:
+                For APIGW error:
+                  value:
+                    code: '25'
+                    message: 'Missing header: <parameter>'
+                For back-end error:
+                  value:
+                    code: '24'
+                    reason: Invalid body field
+                    message: Invalid country
+          headers:
+            APIGW-Exception:
+              $ref: '#/components/headers/ExceptionOptional'
+            APIGW-Exception-Code:
+              $ref: '#/components/headers/ExceptionCodeOptional'
+            APIGW-Exception-System:
+              $ref: '#/components/headers/ExceptionSystemOptional'
+            Content-Type:
+              $ref: '#/components/headers/ContentTypeOptional'
+        '401':
+          $ref: '#/components/responses/APIGWUnauthorized'
+        '403':
+          $ref: '#/components/responses/APIGWAccessDenied'
+        '405':
+          $ref: '#/components/responses/APIGWMethodNotAllowed'
+        '500':
+          description: |-
+            Internal Server Error
+
+            | Code | Message | Description |
+            | ---- | ------- | ----------- |
+            | 01 | Internal Error / There was an error processing your request, please try again later | BT error code / Generic failure message, used if no more precise code can be provided. |
+            | 02 | - | Generic failure message, used if no more precise code can be provided. |
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FailureResponse'
+              examples:
+                For APIGW error:
+                  value:
+                    code: '01'
+                    message: Internal Error
+                For back-end error:
+                  value:
+                    code: '01'
+                    reason: Internal Error
+                    message: There was an error processing your request, please try again later
+          headers:
+            APIGW-Exception:
+              $ref: '#/components/headers/ExceptionOptional'
+            APIGW-Exception-Code:
+              $ref: '#/components/headers/ExceptionCodeOptional'
+            APIGW-Exception-System:
+              $ref: '#/components/headers/ExceptionSystemOptional'
+            Content-Type:
+              $ref: '#/components/headers/ContentTypeOptional'
+        '503':
+          description: |-
+            Service Unavailable
+
+            | Code | Message | Description |
+            | ---- | ------- | ----------- |
+            | 05 | The service is temporarily unavailable / There was an error processing your request, please try again later | Please try again later. | 
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FailureResponse'
+              examples:
+                For APIGW error:
+                  value:
+                    code: '05'
+                    message: The service is temporarily unavailable
+                For back-end error:
+                  value:
+                    code: '05'
+                    reason: The service is temporarily unavailable
+                    message: There was an error processing your request, please try again later
+          headers:
+            APIGW-Exception:
+              $ref: '#/components/headers/ExceptionOptional'
+            APIGW-Exception-Code:
+              $ref: '#/components/headers/ExceptionCodeOptional'
+            APIGW-Exception-System:
+              $ref: '#/components/headers/ExceptionSystemOptional'
+            Content-Type:
+              $ref: '#/components/headers/ContentTypeOptional'
+components:
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      description: This API requires [OAuth API](/node/360) validation.
+      flows:
+        clientCredentials:
+          tokenUrl: https://api.platform.bt.com/oauth/accesstoken?grant_type=client_credentials
+          scopes: {}
+  parameters:
+    APIGWTrackingHeader:
+      name: APIGW-Tracking-Header
+      in: header
+      required: true
+      description: A unique reference used to track the transaction end to end. The recommended format is UUID (a 36-character alphanumeric string "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX").
+      schema:
+        type: string
+        example: 96bb97fa-b941-46bb-8c4e-86c616c28a13
+        pattern: ^[\w.~:@-]{1,255}$
+    BearerAuthorisation:
+      name: Authorization
+      in: header
+      description: This contains the access token obtained from a call to the OAuth API. </br> The access token is prefixed with the word 'Bearer ' to form the authorisation string.
+      schema:
+        example: Bearer <token>
+        type: string
+    JSONContentType:
+      name: Content-Type
+      in: header
+      description: The only supported format for the request body is 'application/json'.
+      required: true
+      schema:
+        type: string
+        example: application/json
+  schemas:
+    geographicLocationRefOrValue:
+      type: object
+      description: Indicates the type of the geographic point reference.
+      properties:
+        geometry:
+          description: A list of geographic points (GeographicPoint [*]). A GeographicPoint defines a geographic point through coordinates.
+          type: array
+          items:
+            type: object
+            properties:
+              x:
+                type: string
+                description: x coordinate (usually latitude).
+                example: '1.430997'
+              'y':
+                type: string
+                description: y coordinate (usually longitude).
+                example: '43.597298'
+    geographicLocationRefOrValueArray:
+      type: array
+      description: Indicates the type of the geographic point reference.
+      items:
+        type: object
+        properties:
+          geometry:
+            description: A list of geographic points (GeographicPoint [*]). A GeographicPoint defines a geographic point through coordinates.
+            type: array
+            items:
+              type: object
+              properties:
+                x:
+                  type: string
+                  description: x coordinate (usually latitude).
+                  example: '1.430997'
+                'y':
+                  type: string
+                  description: y coordinate (usually longitude).
+                  example: '43.597298'
+          spatialRef:
+            description: Geocoding referential. Possible values are 'WGS84', 'BNG'. This field will be returned in the response, only when isSpatialRefBng passed as true.
+            type: string
+            example: BNG
+    additionalAddressAttribute:
+      type: object
+      properties:
+        attributeType:
+          type: string
+          description: AttributeType
+          example: Location
+        listOfAttributeValues:
+          type: array
+          description: ListOfAttributeValues.
+          items:
+            type: string
+            description: AttributeValue.
+            example:
+              - Hot site
+              - Temporary
+              - Uninhabited
+    getGeographicAddressResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier of the address.
+          example: '7513180'
+        uprn:
+          type: string
+          description: Unique property reference number.
+          example: '9051030516'
+        parentUPRN:
+          type: string
+          description: Parent unique property reference number.
+          example: '9051030515'
+        addressSource:
+          type: string
+          description: Source received from downstream.
+          enum:
+            - ROBT
+            - Openreach
+        exchangeGroupCode:
+          type: string
+          description: Identifies the serving exchange for the address.
+          example: BRW
+        districtCode:
+          type: string
+          description: A unique code representing the Openreach district (region) for the address. Only returned for 'Gold' addresses.
+          example: EA
+        qualifier:
+          type: string
+          description: The address qualifier which indicates where the address was found.
+          enum:
+            - Gold
+            - Non-Gold
+            - Silver
+        streetNr:
+          type: string
+          description: Number identifying a specific property on a public street.
+          example: '5'
+        streetName:
+          type: string
+          description: Name of the street or other street type.
+          example: Hoop Lane
+        postcode:
+          type: string
+          description: Descriptor for a postal delivery area, used to speed and simplify the delivery of mail (also known as zipcode).
+          example: NW11 7NG
+        locality:
+          type: string
+          description: An area of defined or undefined boundaries within a local authority or other legislatively defined area, usually rural or semi-rural in nature [ANZLIC-STREET], or a suburb a bounded locality within a city, town or shire principally of urban character[ANZLICSTREET].
+          example: LONDON
+        city:
+          type: string
+          description: City that the address is in.
+          example: LONDON
+        country:
+          type: string
+          description: Country that the address is in.
+          example: UK
+        postalOrganisation:
+          maxLength: 30
+          type: string
+          description: Name of organization for postal deliveries.
+          example: PNC
+        poBox:
+          maxLength: 6
+          type: string
+          description: The post box number.
+          example: '40'
+        county:
+          description: The counties of the United Kingdom are sub-national divisions of the United Kingdom, used for the purposes of administrative, geographical and political demarcation.
+          type: string
+          example: xyz
+        bestAddressLine1:
+          maxLength: 100
+          type: string
+          description: Address information as returned from PAF.
+          example: Flat 1 Rose Cottage
+        bestAddressLine2:
+          maxLength: 60
+          type: string
+          description: Address information as returned from PAF.
+          example: 22 Cheshunt High Street
+        bestAddressLine3:
+          maxLength: 60
+          type: string
+          description: Address information as returned from PAF.
+          example: Tyre Industrial Estate Blantyre
+        bestAddressLine4:
+          maxLength: 30
+          type: string
+          description: Address information as returned from PAF.
+          example: London NW11 7NG
+        '@type':
+          type: string
+          description: Indicates the type of the resource.
+          example: BtGeographicAddress
+          enum:
+            - BtGeographicSubAddress
+            - BtGeographicAddress
+        geographicLocationRefOrValue:
+          anyOf:
+            - $ref: '#/components/schemas/geographicLocationRefOrValue'
+            - $ref: '#/components/schemas/geographicLocationRefOrValueArray'
+        geographicSubAddress:
+          description: Indicates the type of the sub resource.
+          type: array
+          items:
+            type: object
+            properties:
+              buildingName:
+                maxLength: 30
+                type: string
+                description: Premise name. i.e. name of the building, particularly used where there is no street number. Allows for buildings that have well-known names.
+                example: Odeon
+              subBuilding:
+                maxLength: 30
+                type: string
+                description: An area within a building. The sub premise that will be available under the same premise.
+                example: Flat 1
+              subStreet:
+                maxLength: 45
+                type: string
+                description: It is necessary to store additional information as dependent thoroughfare/subStreet to uniquely identify each one, when a thoroughfare/street name exists more than once within a town.
+                example: Stephens
+              subLocality:
+                maxLength: 30
+                type: string
+                description: Supporting dependent locality name to uniquely identify a dependent locality.
+                example: Shelley Avenue
+              '@type':
+                type: string
+                description: Indicates the type of the sub resource.
+                example: BtGeographicSubAddress
+                enum:
+                  - BtGeographicSubAddress
+                  - BtGeographicAddress
+        siteReference:
+          description: Address reference which contains site classification details, technology markers and restrictions.
+          type: object
+          properties:
+            siteClassificationCode:
+              type: string
+              description: A code that describes the site classification of the address.
+              example: Odeon
+            siteClassification:
+              type: string
+              description: Description of the site classification code.
+              example: Flat 1
+            listOfTechnology:
+              type: object
+              description: Contains list of technologies.
+              properties:
+                technology:
+                  type: array
+                  description: Defines whether the address has an association with the given technology infrastructure(s). The associations given will guide the CPs in their choice of address for the desired product or service.
+                  items:
+                    type: object
+                    properties:
+                      technologyName:
+                        type: string
+                        description: Name of the technology infrastructure. Possible values are 'Copper', 'PointToPointFibre', 'FTTPBrownfield', 'FTTPGreenfield'.
+                        example: Copper
+                      technologyValue:
+                        type: string
+                        description: Possible values are 'Y', 'N'. 'Y' indicates whether the address has an association with the given technology infrastructure(s) and 'N' indicates it’s absence.
+                        example: 'Y'
+            listOfTechnologyRestriction:
+              type: object
+              description: Defines whether the address has a restriction with the given technology infrastructure(s).
+              properties:
+                technologyRestriction:
+                  type: array
+                  description: Contains technology restrictions.
+                  items:
+                    type: object
+                    properties:
+                      technologyRestrictionName:
+                        type: string
+                        description: Name of the restricted technology infrastructure. Possible values are 'Copper', 'PointToPointFibre', 'FTTPBrownfield', 'FTTPGreenfield'.
+                        example: Copper
+                      technologyRestrictionValue:
+                        type: string
+                        description: Possible values are 'R', 'U'. 'R' indicates whether the address has a restriction with the given technology infrastructure(s) and 'U' indicates no restriction.
+                        example: R
+        addressMatch:
+          type: boolean
+          description: Indicates whether the Openreach address and ROBT address are matched.
+          example: true
+        matchedId:
+          type: string
+          description: Matching NAD key.
+          example: X05000192647
+        ListOfAdditionalAddressAttributes:
+          type: object
+          description: ListOfAdditionalAddressAttributes
+          properties:
+            additionalAddressAttribute:
+              type: array
+              description: AdditionalAddressAttribute.
+              items:
+                $ref: '#/components/schemas/additionalAddressAttribute'
+    FailureResponse:
+      required:
+        - code
+      type: object
+      properties:
+        code:
+          type: string
+          description: Application related code (as defined in the API or from a common list).
+        reason:
+          type: string
+          description: Text that explains the reason for error.
+        message:
+          type: string
+          description: Text that provides more details and corrective actions related to the error.
+    
+    createGeographicAddressRequest:
+      type: object
+      required:
+        - postcode
+        - city
+        - country
+      properties:
+        streetNr:
+          type: string
+          description: Number identifying a specific property on a public street.
+          example: '5'
+        streetName:
+          type: string
+          description: Name of the street or other street type.
+          maxLength: 100
+          example: Hoop Lane
+        postcode:
+          type: string
+          description: Descriptor for a postal delivery area, used to speed and simplify the delivery of mail (also known as zipcode).
+          example: NW11 7NG
+        locality:
+          type: string
+          maxLength: 50
+          description: An area of defined or undefined boundaries within a local authority or other legislatively defined area, usually rural or semi-rural in nature. [ANZLIC-STREET], or a suburb a bounded locality within a city, town or shire principally of urban character [ANZLICSTREET].
+          example: LONDON
+        city:
+          type: string
+          description: City that the address is in.
+          maxLength: 50
+          example: LONDON
+        country:
+          type: string
+          description: Country that the address is in.
+          example: UK
+        postalOrganisation:
+          maxLength: 30
+          type: string
+          description: Name of organization for postal deliveries.
+          example: PNC
+        poBox:
+          maxLength: 6
+          type: string
+          description: The post box number.
+          example: '40'
+        county:
+          description: The counties of the United Kingdom are subnational divisions of the United Kingdom, used for the purposes of administrative, geographical and political demarcation.
+          type: string
+          maxLength: 100
+          example: xyz
+        '@type':
+          type: string
+          description: Indicates the type of the resource.
+          example: BtGeographicAddress
+          enum:
+            - BtGeographicSubAddress
+            - BtGeographicAddress
+        geographicSubAddress:
+          description: Indicates the type of the sub resource.
+          type: array
+          items:
+            type: object
+            properties:
+              buildingName:
+                maxLength: 30
+                type: string
+                description: Premise name. i.e. name of the building, particularly used where there is no street number. Allows for buildings that have well-known names.
+                example: Odeon
+              subBuilding:
+                maxLength: 200
+                type: string
+                description: An area within a building. The sub premise that will be available under the same premise.
+                example: Flat 1
+              subStreet:
+                maxLength: 100
+                type: string
+                description: It is necessary to store additional information as dependent thoroughfare/subStreet to uniquely identify each one, when thoroughfare/street name exists more than once within a town.
+                example: Stephens
+              subLocality:
+                maxLength: 50
+                type: string
+                description: Supporting dependent locality name to uniquely identify a dependent locality.
+                example: Shelley Avenue
+              '@type':
+                type: string
+                description: Indicates the type of the sub resource.
+                example: BtGeographicSubAddress
+                enum:
+                  - BtGeographicSubAddress
+                  - BtGeographicAddress
+    createGeographicAddressResponse:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: string
+          example: X05000192647
+          description: NAD/Address key returned by RoBT NAD.
+  headers:
+    ExceptionOptional:
+      schema:
+        type: string
+      description: Header carrying the message of the exception.
+    ExceptionCodeOptional:
+      schema:
+        type: string
+      description: Header carrying the code of the exception.
+    ExceptionSystemOptional:
+      schema:
+        type: string
+      description: Header carrying the system from which the exception has originated.
+    ContentTypeOptional:
+      schema:
+        type: string
+      description: This indicates the format of the error response.
+    Exception:
+      schema:
+        type: string
+      description: Header carrying the message of the exception.
+      required: true
+    ExceptionCode:
+      schema:
+        type: string
+      description: Header carrying the code of the exception.
+      required: true
+    ExceptionSystem:
+      schema:
+        type: string
+      description: Header carrying the system from which the exception has originated.
+      required: true
+    ContentType:
+      schema:
+        type: string
+      description: This indicates the format of the error response.
+      required: true
+  responses:
+    APIGWUnauthorized:
+      description: |
+        Unauthorized
+
+        | Code | Message | Description |
+        | ---- | ------- | ----------- |
+        | 40 | Missing credentials | The <i>Authorization</i> parameter is missing. |
+        | 41 | Invalid credentials | The <i>Authorization</i> parameter is not valid. |
+        | 42 | Expired credentials | Renew the access token using the OAuth API and try again. |
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/FailureResponse'
+          example:
+            code: '41'
+            message: Invalid credentials
+      headers:
+        APIGW-Exception:
+          $ref: '#/components/headers/Exception'
+        APIGW-Exception-Code:
+          $ref: '#/components/headers/ExceptionCode'
+        APIGW-Exception-System:
+          $ref: '#/components/headers/ExceptionSystem'
+        Content-Type:
+          $ref: '#/components/headers/ContentType'
+    APIGWAccessDenied:
+      description: |
+        Forbidden
+
+        | Code | Message | Description |
+        | ---- | ------- | ----------- |
+        | 50 | Access denied | The client application is not authorised to call this resource. |
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/FailureResponse'
+          example:
+            code: '50'
+            message: Access denied
+      headers:
+        APIGW-Exception:
+          $ref: '#/components/headers/Exception'
+        APIGW-Exception-Code:
+          $ref: '#/components/headers/ExceptionCode'
+        APIGW-Exception-System:
+          $ref: '#/components/headers/ExceptionSystem'
+        Content-Type:
+          $ref: '#/components/headers/ContentType'
+    APIGWMethodNotAllowed:
+      description: |
+        Method Not Allowed
+
+        | Code | Message   | Description |
+        | ---- | -------   | ----------- |
+        | 61 | Method not allowed | The requested method is not supported by this resource. |   
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/FailureResponse'
+          example:
+            code: '61'
+            message: Method not allowed
+      headers:
+        APIGW-Exception:
+          $ref: '#/components/headers/Exception'
+        APIGW-Exception-Code:
+          $ref: '#/components/headers/ExceptionCode'
+        APIGW-Exception-System:
+          $ref: '#/components/headers/ExceptionSystem'
+        Content-Type:
+          $ref: '#/components/headers/ContentType'
