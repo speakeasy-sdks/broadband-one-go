@@ -15,7 +15,10 @@ paths:
     post:
       summary: Appointment availability
       operationId: postSearchAppointment
+      x-speakeasy-name-override: search
       description: "<p>Find available engineer appointment slots based on a location, product, type of work and 1st available date.</p>\n\t\n<p>This API supports TLS mutual authentication.</p>\n\n <details>\n <summary><b>Sandbox responses</b></summary>\n\n <p>The sandbox supports a number of success and failure scenarios. Use the parameters below in the sandbox API call to generate the corresponding responses.</p>\n <p>Success scenarios responses are simulated based on the parameters mentioned in the table.</p>\n\n <p>Back-end error scenarios responses are simulated based on APIGW-Tracking-Header.</p>\n\n <details>\n <summary><b>Success scenarios</b></summary> \n\n | Parameters| Sandbox response invoked | Description |\n | ----------- | ------------------- | ------------------ |\n | <i>name</i>='DirectoryNumber', <i>value</i>='2277264355'.| 201 | Retrieve product appointments based on 'DirectoryNumber'. |\n | <i>id</i>='R0123457890'. | 201 | Retrieve product appointments based on product place ID. |\n\n\n </details>\n\n <details>\n <summary><b>Error scenarios</b></summary>    \n\n | APIGW-Tracking-Header | Sandbox response invoked | Description |\n | ----------- | ------------ | ------------ | \n | E40001 | 400, TimeSlotNotSupported | The product does not support appointments in that slot. |\n | E40301 | 403, ExchangeLineAssignedToAnotherCP | The exchange line is in use by another communication provider. |\n\n\n </details>\n </details>"
+      tags:
+        - appointments
       x-codeSamples:
         - lang: Shell
           label: cURL
@@ -655,7 +658,10 @@ paths:
     post:
       summary: Create appointment
       operationId: createAppointment
+      x-speakeasy-name-override: schedule
       description: "<p>Reserves an engineering appointment and returns an appointment ID for use in subsequent API calls.</p>      \t <p>This API supports TLS mutual authentication.</p>\n <details>\n <summary><b>Sandbox responses</b></summary>\n\n  <p>The sandbox supports a number of success and failure scenarios. Use the parameters below in the sandbox API call to generate the corresponding responses.</p>\n  <p>Success scenarios responses are simulated based on the parameters mentioned in the table.</p>\n\n  <p>Back-end error scenarios responses are simulated based on APIGW-Tracking-Header.</p>\n\n  <details>\n  <summary><b>Success scenarios</b></summary> \n\n  | Parameters| Sandbox response invoked | Description |\n  | ----------- | ------------------- | ------------------ |\n  | <i>name</i>='DirectoryNumber', <i>value</i>='2277264355'. | 201 | Retrieve product appointments based on 'DirectoryNumber'. |\n  | <i>id</i>='R0123457890'. | 201 | Retrieve get product appointments based on product place ID. |\n  \n\n  </details>\n\n  <details>\n  <summary><b>Error scenarios</b></summary>    \n\n  | APIGW-Tracking-Header | Sandbox response invoked | Description |\n  | ----------- | ------------ | ------------ | \n  | E40001 | 400, TimeSlotNotSupported | The product does not support appointments in that slot. |\n  | E40301 | 403, ExchangeLineAssignedToAnotherCP | The exchange line is in use　by another communication provider. |\n\n  \n  </details>\n  </details>"
+      tags:
+        - appointments
       x-codeSamples:
         - lang: Shell
           label: cURL
