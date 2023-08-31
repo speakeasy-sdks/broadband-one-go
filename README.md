@@ -39,7 +39,7 @@ func main() {
         }
 
     ctx := context.Background()
-    res, err := s.CreateAppointment(ctx, operations.CreateAppointmentRequest{
+    res, err := s.Appointments.Schedule(ctx, operations.CreateAppointmentRequest{
         APIGWTrackingHeader: "96bb97fa-b941-46bb-8c4e-86c616c28a13",
         PostAppointmentRequest: &shared.PostAppointmentRequest{
             RelatedEntity: []shared.PostAppointmentRequestRelatedEntity{
@@ -214,10 +214,11 @@ func main() {
 <!-- Start SDK Available Operations -->
 ## Available Resources and Operations
 
-### [BroadbandOne SDK](docs/sdks/broadbandone/README.md)
 
-* [CreateAppointment](docs/sdks/broadbandone/README.md#createappointment) - Create appointment
-* [PostSearchAppointment](docs/sdks/broadbandone/README.md#postsearchappointment) - Appointment availability
+### [Appointments](docs/sdks/appointments/README.md)
+
+* [Schedule](docs/sdks/appointments/README.md#schedule) - Create appointment
+* [Search](docs/sdks/appointments/README.md#search) - Appointment availability
 <!-- End SDK Available Operations -->
 
 ### Maturity

@@ -19,7 +19,7 @@ func main() {
         }
 
     ctx := context.Background()
-    res, err := s.CreateAppointment(ctx, operations.CreateAppointmentRequest{
+    res, err := s.Appointments.Schedule(ctx, operations.CreateAppointmentRequest{
         APIGWTrackingHeader: "96bb97fa-b941-46bb-8c4e-86c616c28a13",
         PostAppointmentRequest: &shared.PostAppointmentRequest{
             RelatedEntity: []shared.PostAppointmentRequestRelatedEntity{

@@ -1,3 +1,4 @@
+appointments.go
 broadbandone.go
 go.mod
 go.sum
@@ -26,6 +27,7 @@ pkg/models/shared/postsearchappointmentresponse.go
 pkg/models/shared/postsearchappointmentrequest.go
 pkg/models/shared/security.go
 docs/sdks/broadbandone/README.md
+docs/sdks/appointments/README.md
 USAGE.md
 docs/models/operations/createappointmentsecurity.md
 docs/models/operations/createappointmentrequest.md

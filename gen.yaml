@@ -1,6 +1,6 @@
 configVersion: 1.0.0
 management:
-  docChecksum: 88646e04786ec882305559669e201bd2
+  docChecksum: a7260ad1865ad78a390fb3f95106bf1b
   docVersion: "0.2"
   speakeasyVersion: 1.73.1
   generationVersion: 2.84.3
@@ -18,8 +18,9 @@ features:
     globalSecurity: 2.81.1
     globalServerURLs: 2.82.0
     methodSecurity: 2.81.1
+    nameOverrides: 2.81.1
 go:
-  version: 0.2.0
+  version: 0.3.0
   maxMethodParams: 0
   packageName: openapi
 typescript:
