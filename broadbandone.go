@@ -123,7 +123,7 @@ func New(opts ...SDKOption) *BroadbandOne {
 		sdkConfiguration: sdkConfiguration{
 			Language:          "go",
 			OpenAPIDocVersion: "0.2",
-			SDKVersion:        "0.1.0",
+			SDKVersion:        "0.2.0",
 			GenVersion:        "2.84.3",
 		},
 	}

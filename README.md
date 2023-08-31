@@ -13,7 +13,7 @@
 ## SDK Installation
 
 ```bash
-go get github.com/speakeasy-sdks/broadband-one-ts
+go get github.com/speakeasy-sdks/broadband-one-go
 ```
 <!-- End SDK Installation -->
 

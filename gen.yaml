@@ -19,7 +19,7 @@ features:
     globalServerURLs: 2.82.0
     methodSecurity: 2.81.1
 go:
-  version: 0.1.0
+  version: 0.2.0
   maxMethodParams: 0
   packageName: openapi
 typescript:
